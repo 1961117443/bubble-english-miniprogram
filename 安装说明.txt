@@ -1,0 +1,5 @@
+安装说明：
+1、下载HBuilderx(开发版)工具打开项目，此项目为UNI-APP项目；
+2、API网址请更改目录下的common/request/config.js文件，打开即可看到API地址；
+3、当前站点ID：根目录下的main.js文件：Vue.prototype.$site = 1; 1代码获取的是站点ID为1的内容；
+.....
