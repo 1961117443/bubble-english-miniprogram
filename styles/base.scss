@@ -1,0 +1,15 @@
+page {
+  background: $color-bg;
+  color: $color-text;
+  font-size: $fs-body;
+}
+
+/* 常用工具类（少量够用，别堆太多） */
+.text-sub { color: $color-subtext; }
+.text-center { text-align: center; }
+.mt-1 { margin-top: $sp-1; }
+.mt-2 { margin-top: $sp-2; }
+.mt-3 { margin-top: $sp-3; }
+.mb-1 { margin-bottom: $sp-1; }
+.mb-2 { margin-bottom: $sp-2; }
+.mb-3 { margin-bottom: $sp-3; }

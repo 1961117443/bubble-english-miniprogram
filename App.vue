@@ -38,4 +38,5 @@
 <style lang="scss">
 	/*每个页面公共scss */
 	@import "/common/scss/common.scss";
+	@import "@/styles/index.scss";
 </style>

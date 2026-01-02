@@ -1,0 +1,152 @@
+/* Step 页面统一骨架 */
+.step { padding: $sp-3; }
+.step__title { font-size: $fs-title; font-weight: 600; margin-bottom: $sp-1; }
+.step__hint { color: $color-subtext; margin-bottom: $sp-2; font-size: $fs-sub; }
+
+/* 通用卡片 */
+.card {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $sp-3;
+  box-shadow: $shadow-card;
+}
+
+/* 单词区 */
+.word { font-size: $fs-word; font-weight: 700; margin-top: $sp-1; }
+.meaning { color: $color-subtext; margin-top: $sp-1; }
+
+/* 媒体图 */
+.media-img {
+  width: 100%;
+  height: $img-height;
+  border-radius: $radius-md;
+  margin-bottom: $sp-2;
+}
+
+/* 按钮区 */
+.actions {
+  display: flex;
+  gap: $sp-2;
+  margin-top: $sp-3;
+  align-items: center;
+}
+
+/* 2列宫格 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $sp-2;
+}
+
+/* 选项卡片（PlayStep 用） */
+.option-card {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $sp-2;
+  box-shadow: $shadow-card;
+}
+.option-card__img {
+  width: 100%;
+  height: 220rpx;
+  border-radius: $radius-sm;
+}
+.option-card__label {
+  margin-top: 12rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* SpeakStep 的按住录音 */
+.hold-btn{
+  width: 100%;
+  height: 120rpx;
+  border-radius: $radius-md;
+  background: $color-surface;
+  box-shadow: $shadow-card;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.hold-btn.is-on{ background: #ffe4e6; }
+
+
+/* Reward 专用（也可复用） */
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin: 10rpx 0 18rpx;
+}
+.star {
+  font-size: 54rpx;
+  color: #e5e7eb;
+}
+.star.is-on { color: $color-warn; }
+
+.reward-row { display:flex; gap:$sp-2; }
+.reward-item {
+  flex:1;
+  background: $color-bg;
+  border-radius: $radius-md;
+  padding: $sp-2;
+  text-align: center;
+}
+.reward-item__num { font-size: 34rpx; font-weight: 700; }
+.reward-item__label { margin-top: 6rpx; color: $color-subtext; font-size: $fs-sub; }
+
+
+/* ========== Button System ========== */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $btn-radius;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 0 $sp-3;
+  box-sizing: border-box;
+}
+
+/* Size */
+.btn--lg {
+  height: $btn-height-lg;
+  line-height: $btn-height-lg;
+}
+.btn--md {
+  height: $btn-height-md;
+  line-height: $btn-height-md;
+}
+
+/* Type */
+.btn--primary {
+  background: $color-primary;
+  color: #fff;
+}
+.btn--secondary {
+  background: $color-surface;
+  color: $color-text;
+  box-shadow: $shadow-card;
+}
+.btn--ghost {
+  background: transparent;
+  color: $color-subtext;
+}
+
+/* Disabled */
+.btn.is-disabled {
+  opacity: 0.5;
+}
+
+
+.btn--sm {
+  height: $btn-height-sm;
+  line-height: $btn-height-sm;
+  font-size: 26rpx;
+  padding: 0 $sp-2;
+}
+
+
+.actions--end { justify-content: flex-end; }
