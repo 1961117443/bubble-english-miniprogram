@@ -10,11 +10,12 @@
         v-for="c in courses"
         :key="c.id"
         class="card"
-        @click="openCourse(c.id)"
+        @click="openDetail(c.id)"
       >
         <image v-if="c.cover" class="card__cover" :src="c.cover" mode="aspectFill" />
         <view class="card__body">
           <view class="card__title">{{ c.title }}</view>
+          <view class="card__sub">{{ c.subtitle }}</view>
           <view class="card__meta">
             <text class="tag">课程</text>
             <text class="meta">{{ c.wordsCount }} 个单词</text>
@@ -46,14 +47,14 @@ export default {
     this.courses = listCourses()
   },
   methods: {
-    openCourse(courseId) {
+    openDetail(courseId) {
       uni.navigateTo({
-        url: `/pages/learn/index?courseId=${encodeURIComponent(courseId)}`
+        url: `/pages/course/detail?courseId=${encodeURIComponent(courseId)}`
       })
     },
     startToday() {
       const id = getTodayCourseId()
-      this.openCourse(id)
+      this.openDetail(id)
     }
   }
 }
@@ -114,6 +115,12 @@ export default {
   font-size: 32rpx;
   font-weight: 800;
   color: #1f1f1f;
+}
+
+.card__sub {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #666;
 }
 
 .card__meta {

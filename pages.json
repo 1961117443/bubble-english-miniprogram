@@ -24,7 +24,12 @@
 			"style": {
 				"navigationBarTitleText": "课程列表"
 			}
+		},
+		{
+		  "path": "pages/course/detail",
+		  "style": { "navigationBarTitleText": "课程详情" }
 		}
+
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
