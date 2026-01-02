@@ -7,18 +7,18 @@
 
     <view class="card">
       <view class="card__row">
-        <text class="card__label">今日课程</text>
-        <text class="card__value">{{ todayCourseTitle }}</text>
+        <text class="card__label">推荐入口</text>
+        <text class="card__value">学习中心</text>
       </view>
       <view class="card__row">
-        <text class="card__label">学习建议</text>
-        <text class="card__value">每天 5~10 分钟，坚持就很棒</text>
+        <text class="card__label">节奏</text>
+        <text class="card__value">每天 5~10 分钟</text>
       </view>
     </view>
 
     <view class="actions">
-      <button class="btn-primary" type="primary" @click="startLearn">
-        开始学习 / 今日冒险
+      <button class="btn-primary" type="primary" @click="goLearnCenter">
+        进入学习中心
       </button>
       <button class="btn-secondary" @click="goContent">
         课程列表（半自由）
@@ -26,31 +26,17 @@
     </view>
 
     <view class="tips">
-      <text class="tips__text">提示：复习会在学习过程中自动混入（后续）。</text>
+      <text class="tips__text">提示：儿童端默认走强引导；家长可在课程列表自由选课。</text>
     </view>
   </view>
 </template>
 
 <script>
-import { getTodayCourseId, getCourseTitle } from '@/pages/learn/course-repo'
-
 export default {
   name: 'HomePage',
-  data() {
-    return {
-      todayCourseId: '',
-      todayCourseTitle: ''
-    }
-  },
-  onShow() {
-    this.todayCourseId = getTodayCourseId()
-    this.todayCourseTitle = getCourseTitle(this.todayCourseId)
-  },
   methods: {
-    startLearn() {
-      uni.navigateTo({
-        url: `/pages/learn/index?courseId=${encodeURIComponent(this.todayCourseId)}`
-      })
+    goLearnCenter() {
+      uni.navigateTo({ url: '/pages/learn-center/index' })
     },
     goContent() {
       uni.navigateTo({ url: '/pages/content/index' })
@@ -103,8 +89,6 @@ export default {
   font-size: 28rpx;
   font-weight: 700;
   color: #1f1f1f;
-  max-width: 440rpx;
-  text-align: right;
 }
 
 .actions {
@@ -119,7 +103,7 @@ export default {
   line-height: 92rpx;
   border-radius: 18rpx;
   font-size: 32rpx;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .btn-secondary {
@@ -128,7 +112,7 @@ export default {
   line-height: 92rpx;
   border-radius: 18rpx;
   font-size: 30rpx;
-  font-weight: 600;
+  font-weight: 700;
   background: #fff;
   border: 2rpx solid #e6e6e6;
   color: #1f1f1f;

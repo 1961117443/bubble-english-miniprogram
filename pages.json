@@ -28,7 +28,14 @@
 		{
 		  "path": "pages/course/detail",
 		  "style": { "navigationBarTitleText": "课程详情" }
+		},
+		{
+		  "path": "pages/learn-center/index",
+		  "style": {
+		    "navigationBarTitleText": "学习中心"
+		  }
 		}
+
 
     ],
 	"globalStyle": {
