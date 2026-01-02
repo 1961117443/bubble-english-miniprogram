@@ -21,7 +21,7 @@
         开始学习 / 今日冒险
       </button>
       <button class="btn-secondary" @click="goContent">
-        课程列表（占位）
+        课程列表（半自由）
       </button>
     </view>
 
@@ -43,7 +43,6 @@ export default {
     }
   },
   onShow() {
-    // v1：纯前端规则决定“今日课程”
     this.todayCourseId = getTodayCourseId()
     this.todayCourseTitle = getCourseTitle(this.todayCourseId)
   },
@@ -54,8 +53,7 @@ export default {
       })
     },
     goContent() {
-      uni.showToast({ title: '课程列表后续补～', icon: 'none' })
-      // 未来：uni.navigateTo({ url: '/pages/content/index' })
+      uni.navigateTo({ url: '/pages/content/index' })
     }
   }
 }

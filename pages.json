@@ -18,6 +18,12 @@
 				"navigationBarTitleText": "学习",
 				"enablePullDownRefresh": false
 			}
+		},
+		{
+			"path": "pages/content/index",
+			"style": {
+				"navigationBarTitleText": "课程列表"
+			}
 		}
     ],
 	"globalStyle": {

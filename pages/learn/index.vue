@@ -24,7 +24,7 @@
 
 <script>
 import { LearnPageModel } from './model'
-import { getLearnMockCourse } from './mock'
+import { getCourseById } from './course-repo'
 
 import ListenStep from '@/components/learn-steps/ListenStep.vue'
 import PlayStep from '@/components/learn-steps/PlayStep.vue'
@@ -52,12 +52,10 @@ export default {
     return Object.assign({}, LearnPageModel, {
       course: null,
 
-      // 课程级调度
       wordIndex: 0,
       stepIndex: 0,
       inReward: false,
 
-      // 过程数据
       reportId: '',
       startedAt: 0,
       stepStartedAt: 0,
@@ -67,8 +65,9 @@ export default {
     })
   },
 
-  onLoad() {
-    this.course = getLearnMockCourse()
+  onLoad(options) {
+    const courseId = options && options.courseId ? decodeURIComponent(options.courseId) : ''
+    this.course = getCourseById(courseId)
     this.resetRun()
   },
 
@@ -87,7 +86,6 @@ export default {
       return (this.course && this.course.flow && this.course.flow.items) || []
     },
 
-    // 单词顺序：items 即顺序来源
     wordOrder() {
       return this.flowItems.map(x => x.wordId)
     },
@@ -103,7 +101,6 @@ export default {
       return this.course.targets.words.find(w => w.id === wordId) || null
     },
 
-    // 单词级 steps 覆盖 > defaultStepTemplate
     stepTemplate() {
       const def = (this.course && this.course.flow && this.course.flow.defaultStepTemplate) || ['listen', 'play', 'speak']
       return (this.currentItem && this.currentItem.steps && this.currentItem.steps.length) ? this.currentItem.steps : def
@@ -204,12 +201,10 @@ export default {
       })
 
       const list = [mk(answer, true), ...others.map(w => mk(w, false))]
-
       for (let i = list.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
         const t = list[i]; list[i] = list[j]; list[j] = t
       }
-
       return list
     },
 
@@ -241,7 +236,6 @@ export default {
       const wid = this.currentWord && this.currentWord.id
       const durationMs = this.stepStartedAt ? (now - this.stepStartedAt) : 0
 
-      // 记录 StepResult
       this.stepResults.push({
         version: 1,
         reportId: this.reportId,
@@ -256,31 +250,23 @@ export default {
         payload: payload || {}
       })
 
-      // reward done -> 生成 LearnReport 并 submit（不落地本地）
       if (this.inReward) {
         try {
           const report = await this.submitLearnReport()
           console.log('[LearnReport done]', report)
         } catch (e) {
           console.error('[LearnReport submit failed]', e)
-          // v1：不阻断用户完成体验
           uni.showToast({ title: '上报失败（调试）', icon: 'none' })
         }
-
         this.isFinished = true
         return
       }
 
-      // 推进 step
       this.stepIndex++
-
-      // 当前单词完成 -> 下一个单词
       if (this.stepIndex >= this.stepTemplate.length) {
         this.stepIndex = 0
         this.wordIndex++
       }
-
-      // 所有单词完成 -> 进入 Reward
       if (this.wordIndex >= this.wordOrder.length) {
         this.inReward = true
       }
