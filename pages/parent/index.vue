@@ -35,6 +35,15 @@
       <text class="card__text">后端接入后：支持多孩子、动态年龄计算、进入学习时选择孩子。</text>
       <view class="btns">
         <button class="btn" @click="goAddChild">添加孩子档案（占位）</button>
+        <button class="btn" @click="goStats">学习统计（占位）</button>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card__title">付费价值说明</text>
+      <text class="card__text">会员只解锁进阶、主题包单卖：先解释价值再引导购买（当前仅 UI 占位）。</text>
+      <view class="btns">
+        <button class="btn" @click="goPayValue">查看解锁说明</button>
       </view>
     </view>
   </view>
@@ -75,6 +84,12 @@ export default {
     },
     goAddChild() {
       uni.navigateTo({ url: '/pages/parent/child-add' })
+    },
+    goStats() {
+      uni.navigateTo({ url: '/pages/parent/stats' })
+    },
+    goPayValue() {
+      uni.navigateTo({ url: '/pages/pay/value' })
     }
   }
 }

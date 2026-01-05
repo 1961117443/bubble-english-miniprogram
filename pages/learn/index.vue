@@ -151,8 +151,8 @@ import VideoModal from '@/components/learn-common/VideoModal.vue'
 import LearnFinishModal from '@/components/learn-common/LearnFinishModal.vue'
 
 import { entitlementStore } from '@/services/entitlement-store'
-import { EntitlementApi } from '@/services/api/entitlement-api'
-import { ChildApi } from '@/services/api/child-api'
+import { EntitlementApi } from '@/api/entitlement-api'
+import { ChildApi } from '@/api/child-api'
 
 const STEP_COMPONENT_MAP = {
   listen: 'ListenStep',

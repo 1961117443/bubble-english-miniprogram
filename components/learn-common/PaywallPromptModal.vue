@@ -56,13 +56,14 @@ export default {
   },
   methods: {
     onAction() {
-      // ✅ 后续接后端/支付时替换
+      // ✅ 进入“付费价值解释页”（不直接打断成交，先解释价值）
       console.log('[Paywall action]', {
         reason: this.reason,
         needVip: this.needVip,
         needTheme: this.needTheme
       })
-      uni.showToast({ title: '占位：后续接支付/后端', icon: 'none' })
+      const url = `/pages/pay/value?needTheme=${encodeURIComponent(this.needTheme || '')}&needVip=${this.needVip ? 1 : 0}`
+      uni.navigateTo({ url })
       this.$emit('action')
     },
     onContinueGuest() {

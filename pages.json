@@ -43,6 +43,31 @@
 		  "path": "pages/parent/child-add",
 		  "style": { "navigationBarTitleText": "添加孩子" }
 		}
+		,
+		{
+		  "path": "pages/parent/stats",
+		  "style": { "navigationBarTitleText": "学习统计" }
+		}
+		,
+		{
+		  "path": "pages/auth/login",
+		  "style": { "navigationBarTitleText": "登录" }
+		},
+		{
+		  "path": "pages/auth/callback",
+		  "style": { "navigationBarTitleText": "登录中" }
+		}
+		,
+		{
+		  "path": "pages/pay/value",
+		  "style": { "navigationBarTitleText": "解锁说明" }
+		}
+		,
+		{
+		  "path": "pages/pay/value",
+		  "style": { "navigationBarTitleText": "解锁说明" }
+		}
+
 
 
     ],

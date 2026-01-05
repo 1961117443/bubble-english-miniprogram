@@ -1,7 +1,6 @@
-const PENDING_KEY = 'learn_pending_reports_v1'
+import { ReportApi } from '@/api/report-api'
 
-// 你先填你的后端地址（建议放成环境配置）
-const BASE_URL = '' // 例如 'https://api.xxx.com'
+const PENDING_KEY = 'learn_pending_reports_v1'
 
 function now() {
   return Date.now()
@@ -66,23 +65,14 @@ export function buildSummary(stepResults) {
   return s
 }
 
-export function submitLearnReport(report) {
-  return new Promise((resolve) => {
-    uni.request({
-      url: BASE_URL + '/api/learn/reports',
-      method: 'POST',
-      header: { 'content-type': 'application/json' },
-      data: report,
-      timeout: 10000,
-      success: (res) => {
-        // 兼容你未来的统一返回结构
-        resolve({ ok: true, res })
-      },
-      fail: (err) => {
-        resolve({ ok: false, err })
-      }
-    })
-  })
+export async function submitLearnReport(report) {
+  // ✅ 后续由后端实现；当前前端只占位
+  try {
+    const res = await ReportApi.submit(report)
+    return { ok: true, res }
+  } catch (err) {
+    return { ok: false, err }
+  }
 }
 
 /**

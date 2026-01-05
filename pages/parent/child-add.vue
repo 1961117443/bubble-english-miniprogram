@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { ChildApi } from '@/services/api/child-api'
+import { ChildApi } from '@/api/child-api'
 import { calcAgeBandByBirthYearMonth } from '@/models/ChildProfile'
 
 export default {
