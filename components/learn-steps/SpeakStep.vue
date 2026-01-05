@@ -1,11 +1,14 @@
 <template>
 	<view class="step">
 		<view class="step__title">说一说</view>
-		<view class="step__hint">{{ promptText }}</view>
+		<view class="step__hint" v-if="promptText">{{ promptText }}</view>
 
-		<image v-if="wordImage" class="media-img" :src="wordImage" mode="aspectFill"></image>
-		<view class="word">{{ wordText }}</view>
-		<view class="meaning" v-if="wordMeaning">{{ wordMeaning }}</view>
+		<!-- compact：句子回合由外层 Shell 展示文本，这里仅保留录音控件 -->
+		<view v-if="!compact">
+			<image v-if="wordImage" class="media-img" :src="wordImage" mode="aspectFill"></image>
+			<view class="word">{{ wordText }}</view>
+			<view class="meaning" v-if="wordMeaning">{{ wordMeaning }}</view>
+		</view>
 
 		<view class="mt-2">
 			<view class="text-sub">
@@ -38,18 +41,16 @@
 				</view>
 
 				<view v-if="allowSkip && !audioPath" class="actions actions--end">
-					<view class="btn btn--sm btn--ghost" @click="skip">跳过（调试用）</view>
+					<view class="btn btn--sm btn--ghost" @tap="skip">跳过（调试用）</view>
 				</view>
 			</view>
-
-
-
-
 		</view>
 	</view>
 </template>
 
 <script>
+	import audioHub from "../../common/learn/audio-hub.js"
+
 	export default {
 		name: 'SpeakStep',
 		props: {
@@ -60,6 +61,14 @@
 			word: {
 				type: Object,
 				default: () => ({})
+			},
+			unitType: {
+				type: String,
+				default: ''
+			},
+			compact: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data() {
@@ -77,9 +86,15 @@
 			payload() {
 				return (this.step && this.step.payload) ? this.step.payload : {}
 			},
+			isSentence() {
+				return this.unitType === 'sentence'
+			},
 			promptText() {
+				// payload 优先；句子回合（compact）默认给一个更轻的提示
+				if (this.payload.promptText) return this.payload.promptText
+				if (this.compact && this.isSentence) return '跟我读一遍～'
 				const wt = this.wordText || ''
-				return this.payload.promptText || (wt ? `跟读：${wt}` : '跟读一遍～')
+				return wt ? `跟读：${wt}` : '跟读一遍～'
 			},
 			maxDurationSec() {
 				return Number(this.payload.maxDurationSec || 8)
@@ -103,6 +118,7 @@
 			this.bindRecorderEvents()
 
 			this.player = uni.createInnerAudioContext()
+			audioHub.register(this.player)
 			this.player.autoplay = false
 			this.player.onEnded(() => {
 				this.playing = false
@@ -117,6 +133,7 @@
 		beforeDestroy() {
 			this.clearTimer()
 			if (this.player) {
+				audioHub.unregister(this.player)
 				try {
 					this.player.stop()
 				} catch (e) {}
@@ -166,7 +183,7 @@
 			},
 			clearTimer() {
 				if (this.timer) {
-					clearInterval(this.timer);
+					clearInterval(this.timer)
 					this.timer = null
 				}
 			},
@@ -183,7 +200,7 @@
 						sampleRate: 16000,
 						numberOfChannels: 1,
 						encodeBitRate: 96000,
-						format: 'mp3' // 不支持就改 aac
+						format: 'mp3'
 					})
 				} catch (e) {
 					uni.showToast({
@@ -218,39 +235,27 @@
 
 			stopPlay() {
 				if (!this.player) return
-				try {
-					this.player.stop()
-				} catch (e) {}
-				this.playing = false
+				try { this.player.stop() } catch (e) {}
 			},
 
 			reset() {
 				if (this.recording) return
 				this.stopPlay()
+				this.playing = false
 				this.audioPath = ''
 				this.seconds = 0
 			},
 
-			done() {
-				if (!this.audioPath && !this.allowSkip) {
-					uni.showToast({
-						title: '先录一段再下一步～',
-						icon: 'none'
-					})
-					return
-				}
-				this.$emit('done', {
-					audioPath: this.audioPath,
-					recorded: !!this.audioPath,
-					durationSec: this.seconds
-				})
+			skip() {
+				// 调试：允许无录音继续
+				this.$emit('done', { skipped: true, reason: 'debug_skip' })
 			},
 
-			skip() {
+			done() {
 				this.$emit('done', {
-					recorded: false,
-					durationSec: 0,
-					skipped: true
+					recorded: !!this.audioPath,
+					seconds: this.seconds,
+					allowSkip: this.allowSkip
 				})
 			}
 		}

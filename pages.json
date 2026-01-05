@@ -34,6 +34,14 @@
 		  "style": {
 		    "navigationBarTitleText": "学习中心"
 		  }
+		},
+		{
+		  "path": "pages/parent/index",
+		  "style": { "navigationBarTitleText": "家长中心" }
+		},
+		{
+		  "path": "pages/parent/child-add",
+		  "style": { "navigationBarTitleText": "添加孩子" }
 		}
 
 

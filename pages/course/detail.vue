@@ -48,6 +48,16 @@
         返回课程列表
       </button>
     </view>
+
+    <PaywallPromptModal
+      :visible="paywall.visible"
+      :reason="paywall.reason"
+      :needVip="paywall.needVip"
+      :needTheme="paywall.needTheme"
+      @close="paywall.visible=false"
+      @continue-guest="onContinueGuest"
+      @action="paywall.visible=false"
+    />
   </view>
 
   <view v-else class="empty">
@@ -58,9 +68,13 @@
 
 <script>
 import { getCourseById, getCourseMeta, getCourseOutline } from '@/pages/learn/course-repo'
+import PaywallPromptModal from '@/components/learn-common/PaywallPromptModal.vue'
+import { entitlementStore } from '@/services/entitlement-store'
+import { checkCourseAccess } from '@/services/access-control'
 
 export default {
   name: 'CourseDetail',
+  components: { PaywallPromptModal },
   data() {
     return {
       courseId: '',
@@ -70,6 +84,7 @@ export default {
       wordsCount: 0,
       flowText: '',
       wordsPreview: []
+      ,paywall: { visible: false, reason: 'need_theme', needVip: false, needTheme: '' }
     }
   },
   onLoad(options) {
@@ -97,9 +112,19 @@ export default {
 
     start() {
       if (!this.courseId) return
-      uni.navigateTo({
-        url: `/pages/learn/index?courseId=${encodeURIComponent(this.courseId)}`
-      })
+      const ent = entitlementStore.get()
+      const ret = checkCourseAccess(this.course, ent)
+      if (!ret.ok) {
+        this.paywall = { visible: true, reason: ret.reason, needVip: ret.needVip, needTheme: ret.needTheme }
+        return
+      }
+      uni.navigateTo({ url: `/pages/learn/index?courseId=${encodeURIComponent(this.courseId)}` })
+    },
+
+    onContinueGuest() {
+      this.paywall.visible = false
+      // 体验优先：允许直接以 guest 模式进入（不保存记录）
+      uni.navigateTo({ url: `/pages/learn/index?mode=guest&courseId=${encodeURIComponent(this.courseId)}&childAge=5` })
     },
 
     back() {

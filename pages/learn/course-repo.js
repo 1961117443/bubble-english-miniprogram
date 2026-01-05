@@ -14,13 +14,17 @@ export function getDefaultChildAge() {
  *  v1 课程（你现有的）
  *  ========================= */
 function courseAnimals() {
-  return getLearnMockCourse()
+  const c = getLearnMockCourse()
+  // 访问控制（占位）：免费 + 动物主题
+  c.access = { level: 'free', theme: 'zoo' }
+  return c
 }
 
 function courseFarm() {
   const c = getLearnMockCourse()
   c.id = 'course-farm-01'
   c.title = '农场日常'
+  c.access = { level: 'free', theme: 'farm' }
   if (c.flow) c.flow.reward = { stars: 2, coin: 8, stickerId: 'farm-01' }
   if (c.targets && c.targets.words && c.targets.words[0] && c.targets.words[0].assets) {
     c.targets.words[0].assets.image = '/static/banner/2.jpg'
@@ -32,6 +36,7 @@ function courseBody() {
   const c = getLearnMockCourse()
   c.id = 'course-body-01'
   c.title = '我的身体'
+  c.access = { level: 'free', theme: 'body' }
   if (c.flow) c.flow.reward = { stars: 3, coin: 12, stickerId: 'body-01' }
   if (c.targets && c.targets.words && c.targets.words[0] && c.targets.words[0].assets) {
     c.targets.words[0].assets.image = '/static/banner/3.jpg'
@@ -47,10 +52,19 @@ function coursePandaV2() {
   return {
     id: 'course-panda-01',
     title: '熊猫 Panda',
+    access: { level: 'free', theme: 'zoo' },
     // 可选：展示/列表用的元信息（避免到处猜 cover）
     meta: {
-      cover: '/static/banner/3.jpg',
+      cover: '/static/demo/bg-learn.png',
       subtitle: '从视频里学熊猫的词语与句子'
+    },
+
+    // video：作为内容源。LearnPage 会优先播放 video.url，播完再进入学习。
+    // 你后续可以把 url 替换成自己的视频地址 / CDN 地址。
+    video: {
+      // demo：可替换为你自己的熊猫视频（建议 mp4）
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      duration: 56
     },
 
     source: { type: 'video', videoId: 'video_panda_01', duration: 56 },
@@ -58,11 +72,11 @@ function coursePandaV2() {
     // v2：按年龄解锁的学习单元
     units: [
       // word units（minAge=3）
-      { id: 'w_panda', type: 'word', text: 'panda', meaning: '熊猫', minAge: 3, assets: { image: '/static/banner/3.jpg', audio: '' } },
-      { id: 'w_bamboo', type: 'word', text: 'bamboo', meaning: '竹子', minAge: 3, assets: { image: '/static/banner/2.jpg', audio: '' } },
-      { id: 'w_color', type: 'word', text: 'black and white', meaning: '黑白', minAge: 3, assets: { image: '/static/banner/1.jpg', audio: '' } },
-      { id: 'w_eye', type: 'word', text: 'eye', meaning: '眼睛', minAge: 3, assets: { image: '/static/banner/1.jpg', audio: '' } },
-      { id: 'w_leg', type: 'word', text: 'leg', meaning: '腿', minAge: 3, assets: { image: '/static/banner/2.jpg', audio: '' } },
+      { id: 'w_panda', type: 'word', text: 'panda', meaning: '熊猫', minAge: 3, assets: { image: '/static/units/panda.png', audio: '' } },
+      { id: 'w_bamboo', type: 'word', text: 'bamboo', meaning: '竹子', minAge: 3, assets: { image: '/static/units/bamboo.png', audio: '' } },
+      { id: 'w_color', type: 'word', text: 'black and white', meaning: '黑白', minAge: 3, assets: { image: '/static/units/black_white.png', audio: '' } },
+      { id: 'w_eye', type: 'word', text: 'eye', meaning: '眼睛', minAge: 3, assets: { image: '/static/units/eye.png', audio: '' } },
+      { id: 'w_leg', type: 'word', text: 'leg', meaning: '腿', minAge: 3, assets: { image: '/static/units/leg.png', audio: '' } },
 
       // sentence units（minAge=5）
       { id: 's_color', type: 'sentence', text: 'Pandas are black and white.', meaning: '熊猫是黑白相间的。', minAge: 5, assets: { audio: '' } },
@@ -83,6 +97,23 @@ function coursePandaV2() {
   }
 }
 
+// v2：熊猫（进阶示例）— 用于展示“会员解锁进阶内容”的 UI（占位）
+function coursePandaAdvancedV2() {
+  const base = coursePandaV2()
+  base.id = 'course-panda-adv-01'
+  base.title = '熊猫 Panda · 进阶'
+  base.access = { level: 'advanced', theme: 'zoo' }
+  base.meta = {
+    cover: '/static/demo/bg-learn.png',
+    subtitle: '进阶：更多句子练习（会员解锁）'
+  }
+  // 加一条句子单元，让它更像“进阶”
+  base.units = (base.units || []).concat([
+    { id: 's_more', type: 'sentence', text: 'Pandas live in China.', meaning: '熊猫生活在中国。', minAge: 5, assets: { audio: '' } }
+  ])
+  return base
+}
+
 /** =========================
  *  Registry
  *  ========================= */
@@ -93,7 +124,8 @@ const COURSE_REGISTRY = {
   'course-body-01': courseBody,
 
   // v2
-  'course-panda-01': coursePandaV2
+  'course-panda-01': coursePandaV2,
+  'course-panda-adv-01': coursePandaAdvancedV2
 }
 
 /** 今日课程 */
@@ -119,7 +151,8 @@ export function listCourses() {
       title: c.title,
       cover: meta.cover,
       subtitle: meta.subtitle,
-      wordsCount: outline.wordsCount
+      wordsCount: outline.wordsCount,
+      access: c.access || { level: 'free', theme: 'misc' }
     }
   })
 }

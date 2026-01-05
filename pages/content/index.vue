@@ -10,7 +10,7 @@
         v-for="c in courses"
         :key="c.id"
         class="card"
-        @click="openDetail(c.id)"
+        @click="onCourseClick(c)"
       >
         <image v-if="c.cover" class="card__cover" :src="c.cover" mode="aspectFill" />
         <view class="card__body">
@@ -18,6 +18,7 @@
           <view class="card__sub">{{ c.subtitle }}</view>
           <view class="card__meta">
             <text class="tag">课程</text>
+            <text v-if="c.badgeText" class="tag tag--lock">{{ c.badgeText }}</text>
             <text class="meta">{{ c.wordsCount }} 个单词</text>
           </view>
         </view>
@@ -30,27 +31,69 @@
         回到今日课程
       </button>
     </view>
+
+    <PaywallPromptModal
+      :visible="paywall.visible"
+      :reason="paywall.reason"
+      :needVip="paywall.needVip"
+      :needTheme="paywall.needTheme"
+      @close="paywall.visible = false"
+      @continue-guest="paywall.visible=false"
+      @action="paywall.visible = false"
+    />
   </view>
 </template>
 
 <script>
 import { listCourses, getTodayCourseId } from '@/pages/learn/course-repo'
+import PaywallPromptModal from '@/components/learn-common/PaywallPromptModal.vue'
+import { entitlementStore } from '@/services/entitlement-store'
+import { checkCourseAccess, themeLabel } from '@/services/access-control'
 
 export default {
   name: 'ContentIndex',
+  components: { PaywallPromptModal },
   data() {
     return {
-      courses: []
+      courses: [],
+      paywall: {
+        visible: false,
+        reason: 'need_theme',
+        needVip: false,
+        needTheme: ''
+      }
     }
   },
   onShow() {
-    this.courses = listCourses()
+    const ent = entitlementStore.get()
+    this.courses = listCourses().map(c => {
+      const a = checkCourseAccess(c, ent)
+      let badgeText = ''
+      if (!a.ok) {
+        if (a.reason === 'need_theme') badgeText = themeLabel(a.needTheme)
+        else if (a.reason === 'need_vip') badgeText = '会员进阶'
+        else badgeText = '主题 + 会员'
+      }
+      return { ...c, badgeText }
+    })
   },
   methods: {
     openDetail(courseId) {
-      uni.navigateTo({
-        url: `/pages/course/detail?courseId=${encodeURIComponent(courseId)}`
-      })
+      uni.navigateTo({ url: `/pages/course/detail?courseId=${encodeURIComponent(courseId)}` })
+    },
+    onCourseClick(course) {
+      const ent = entitlementStore.get()
+      const ret = checkCourseAccess(course, ent)
+      if (ret.ok) {
+        this.openDetail(course.id)
+        return
+      }
+      this.paywall = {
+        visible: true,
+        reason: ret.reason,
+        needVip: ret.needVip,
+        needTheme: ret.needTheme
+      }
     },
     startToday() {
       const id = getTodayCourseId()
@@ -137,6 +180,11 @@ export default {
   padding: 6rpx 10rpx;
   border-radius: 999rpx;
   font-weight: 700;
+}
+
+.tag--lock {
+  color: #d47b00;
+  background: rgba(255,153,0,0.12);
 }
 
 .meta {

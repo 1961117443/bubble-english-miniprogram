@@ -1,7 +1,7 @@
 <template>
 	<view class="step">
-		<view class="step__title">玩一玩</view>
-		<view class="step__hint">{{ promptText }}</view>
+		<view class="step__title">{{ titleText }}</view>
+		<view class="step__hint">{{ hintText }}</view>
 
 		<view class="grid-2">
 			<view v-for="(op, idx) in options" :key="idx" class="option-card" @click="choose(op)">
@@ -24,6 +24,10 @@
 			word: {
 				type: Object,
 				default: () => ({})
+			},
+			ageMode: {
+				type: String,
+				default: 'standard'
 			}
 		},
 		data() {
@@ -41,24 +45,37 @@
 				return (this.step && this.step.payload) ? this.step.payload : {}
 			},
 			options() {
-				return this.payload.options || []
+				const list = this.payload.options || []
+				// 3-4 岁：降低选择负担（一般已由父层控制为 2 个，这里再兜底）
+				if (this.ageMode === 'lite') return list.slice(0, 2)
+				return list
 			},
 			maxTry() {
 				return this.payload.maxTry || 3
 			},
 			promptText() {
 				return this.payload.promptText || 'Try it!'
+			},
+			titleText() {
+				return this.ageMode === 'lite' ? '找一找' : '玩一玩'
+			},
+			hintText() {
+				if (this.ageMode === 'lite') {
+					const w = (this.word && this.word.text) ? this.word.text : ''
+					return w ? `点一张：${w}` : '点一张正确的卡片'
+				}
+				return this.promptText
 			}
 		},
 		methods: {
 			choose(op) {
 				if (!op) return
+				const durationMs = Date.now() - this.startedAt
 
 				const isCorrect = !!op.isAnswer
 				if (isCorrect) {
 					this.tips = '太棒了！'
 					uni.vibrateShort && uni.vibrateShort()
-					const durationMs = Date.now() - this.startedAt
 					setTimeout(() => this.$emit('done', {
 						tries: this.tries + 1,
 						correct: true,
