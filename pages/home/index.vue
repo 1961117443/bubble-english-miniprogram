@@ -112,7 +112,7 @@ export default {
 }
 .hero__sub {
   display: block;
-  margin-top: 50rpx;
+  margin-top: 10rpx;
   font-size: 26rpx;
   color: #666;
 }

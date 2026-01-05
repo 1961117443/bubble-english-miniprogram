@@ -3,7 +3,7 @@
  * NOTE: No persistence; backend should provide real session/token.
  */
 const state = {
-  isLoggedIn: true,
+  isLoggedIn: false,
   parentId: null,
   token: null
 }
